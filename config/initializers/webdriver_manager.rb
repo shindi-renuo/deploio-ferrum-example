@@ -1,3 +1,3 @@
 require "fileutils"
 
-FileUtils.mv("chromium-linux/chrome", "/tmp")
+FileUtils.mv(Rails.root.join("chromium-linux/chrome"), "tmp")
