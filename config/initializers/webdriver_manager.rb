@@ -1,1 +1,3 @@
-require "webdriver_manager"
+require "fileutils"
+
+FileUtils.mv("chromium-linux/chrome", "/tmp")

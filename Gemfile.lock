@@ -376,7 +376,6 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webdriver_manager (0.1.0)
     webrick (1.9.1)
     websocket (1.2.11)
     websocket-driver (0.8.0)
@@ -425,7 +424,6 @@ DEPENDENCIES
   turbo-rails
   tzinfo-data
   web-console
-  webdriver_manager
 
 RUBY VERSION
    ruby 3.4.2p28
