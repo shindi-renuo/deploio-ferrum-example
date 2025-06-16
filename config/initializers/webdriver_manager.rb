@@ -1,0 +1,1 @@
+require "webdriver_manager"
