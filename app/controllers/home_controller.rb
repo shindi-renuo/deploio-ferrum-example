@@ -20,7 +20,7 @@ class HomeController < ApplicationController
 
     if pdf_result && pdf_result.generation_state == "completed" && File.exist?("tmp/#{pdf_result.filename}")
       Rails.logger.debug "File exists and generation_state is completed. Sending file: tmp/#{pdf_result.filename}"
-      send_file "tmp/#{pdf_result.filename}", filename: pdf_result.filename, type: "application/pdf", disposition: "attachment"
+      send_file Rails.root.join("tmp", pdf_result.filename), filename: pdf_result.filename, type: "application/pdf", disposition: "attachment"
     elsif pdf_result && pdf_result.generation_state == "failed"
       Rails.logger.debug "PdfResult generation_state is failed. Error: #{pdf_result.error_message}"
       render plain: "PDF generation failed: #{pdf_result.error_message}", status: :internal_server_error
