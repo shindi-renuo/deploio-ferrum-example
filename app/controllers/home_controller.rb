@@ -3,7 +3,7 @@ class HomeController < ApplicationController
   end
 
   def generate_pdf
-    browser = Ferrum::Browser.new(headless: true)
+    browser = Ferrum::Browser.new(headless: true, timeout: 20)
     browser.go_to("http://localhost:3000/example")
     browser.pdf(path: "example.pdf", paper_width: 1.0, paper_height: 1.0)
     browser.quit()
