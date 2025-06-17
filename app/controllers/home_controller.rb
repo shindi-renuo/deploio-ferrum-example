@@ -18,7 +18,7 @@ class HomeController < ApplicationController
       Rails.logger.debug "PdfResult not found for filename: #{params[:filename]}"
     end
 
-    if pdf_result && pdf_result.generation_state == "completed" && File.exist?("tmp/#{pdf_result.filename}")
+    if pdf_result && pdf_result.generation_state == "completed" && File.exist?(Rails.root.join("tmp", pdf_result.filename))
       Rails.logger.debug "File exists and generation_state is completed. Sending file: tmp/#{pdf_result.filename}"
       send_file Rails.root.join("tmp", pdf_result.filename), filename: pdf_result.filename, type: "application/pdf", disposition: "attachment"
     elsif pdf_result && pdf_result.generation_state == "failed"
