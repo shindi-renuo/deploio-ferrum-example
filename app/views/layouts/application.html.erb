@@ -24,6 +24,7 @@
   </head>
 
   <body class="h-screen">
+    <%= turbo_stream_from "pdf_results" %>
     <%= yield %>
   </body>
 </html>

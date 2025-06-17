@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
   get "home/generate_pdf" => "home#generate_pdf"
+  get "home/download_pdf/:filename", to: "home#download_pdf", as: :download_pdf, constraints: { filename: /.+/ }
 
   get "example" => "example#index"
 end
