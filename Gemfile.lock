@@ -110,12 +110,6 @@ GEM
       tzinfo
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
-    ferrum (0.17.1)
-      addressable (~> 2.5)
-      base64 (~> 0.2)
-      concurrent-ruby (~> 1.1)
-      webrick (~> 1.7)
-      websocket-driver (~> 0.7)
     ffi (1.17.2-aarch64-linux-gnu)
     ffi (1.17.2-aarch64-linux-musl)
     ffi (1.17.2-arm-linux-gnu)
@@ -170,6 +164,10 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.2)
+    mime-types (3.7.0)
+      logger
+      mime-types-data (~> 3.2025, >= 3.2025.0507)
+    mime-types-data (3.2025.0610)
     mini_magick (5.2.0)
       benchmark
       logger
@@ -225,6 +223,10 @@ GEM
     public_suffix (6.0.2)
     puma (6.6.0)
       nio4r (~> 2.0)
+    puppeteer-ruby (0.45.6)
+      concurrent-ruby (>= 1.1, < 1.4)
+      mime-types (>= 3.0)
+      websocket-driver (>= 0.6.0)
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.16)
@@ -376,7 +378,6 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webrick (1.9.1)
     websocket (1.2.11)
     websocket-driver (0.8.0)
       base64
@@ -403,13 +404,13 @@ DEPENDENCIES
   capybara
   debug
   faker
-  ferrum
   image_processing (~> 1.2)
   importmap-rails
   jbuilder
   kamal
   propshaft
   puma (>= 5.0)
+  puppeteer-ruby
   rails (~> 8.0.2)
   rubocop-rails-omakase
   selenium-webdriver

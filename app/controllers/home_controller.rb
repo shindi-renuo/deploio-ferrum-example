@@ -3,11 +3,12 @@ class HomeController < ApplicationController
   end
 
   def generate_pdf
-    browser = Ferrum::Browser.new(browser_path: ENV.fetch("BROWSER_PATH") || Rails.root.join("chromium-linux/chrome").to_s, headless: true, timeout: 20, process_timeout: 20)
-    link = "https://arrogant-aurora.941625c.deploio.app/example"
-    browser.go_to(link)
-    browser.pdf(path: "example.pdf", paper_width: 1.0, paper_height: 1.0)
-    browser.quit()
-    send_file "example.pdf", filename: "example.pdf", type: "application/pdf"
+    Puppeteer.launch(headless: true, args: [ "--no-sandbox" ]) do |browser|
+      page = browser.new_page
+      page.goto("https://arrogant-aurora.941625c.deploio.app/example")
+      page.pdf(path: "output.pdf", print_background: true, prefer_css_page_size: true, margin: { top: "0.5in", right: "0.5in", bottom: "0.5in", left: "0.5in" })
+      page.close
+      send_file "output.pdf", filename: "output.pdf", type: "application/pdf"
+    end
   end
 end
