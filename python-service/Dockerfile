@@ -33,9 +33,8 @@ RUN apt-get update && apt-get install -y \
   wget \
   curl \
   gnupg \
+  chromium \
   && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get install -y chromium
 
 # Create app dir
 WORKDIR /app
