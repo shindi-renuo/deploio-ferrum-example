@@ -1,9 +1,0 @@
-<% if pdf_result.generation_state == "pending" %>
-  <p>PDF generation is pending...</p>
-<% elsif pdf_result.generation_state == "generating" %>
-  <p>PDF is currently being generated...</p>
-<% elsif pdf_result.generation_state == "completed" %>
-  <p>PDF generation completed! <a href="<%= download_pdf_path(filename: pdf_result.filename) %>">Download PDF</a></p>
-<% elsif pdf_result.generation_state == "failed" %>
-  <p>PDF generation failed! Error: <%= pdf_result.error_message %></p>
-<% end %>

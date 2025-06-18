@@ -1,0 +1,28 @@
+services:
+  rails-app:
+    build: ./rails-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./rails-app:/rails
+    depends_on:
+      - python-service
+    environment:
+      - COMPOSE_BAKE=true
+      - PYTHON_SERVICE_URL=http://python-service:5000
+      - RAILS_ENV=development
+      - SECRET_KEY_BASE=e0e379fe1347af932c2690eb85430282
+
+  python-service:
+    build: ./python-service
+    volumes:
+      - ./python-service:/app
+    ports:
+      - "5000:5000"
+    # we gotta increase ram size, otherwise chromium will crash
+    # using dev_shm
+    shm_size: 2gb
+    environment:
+      - COMPOSE_BAKE=true
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+      - DISPLAY=:99
