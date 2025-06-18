@@ -4,8 +4,8 @@
       <span class="block sm:inline"><%= flash[:alert] %></span>
     </div>
   <% end %>
-  <h1 class="text-3xl font-bold underline">Ferrum PDF Generation Example</h1>
-  <p class="text-center">This Rails App is meant to demonstrate the capabilities of the <code>ferrum</code> gem, and whether it even works on deploio.</p>
+  <h1 class="text-3xl font-bold underline">Pyppeteer PDF Generation Example</h1>
+  <p class="text-center">This Rails App is meant to demonstrate the capabilities of the <code>pyppeteer</code> gem, and whether it even works on deploio.</p>
   <%= form_with url: home_generate_pdf_path, method: :post, data: { turbo: false } do |form| %>
     <%= form.text_field :url, value: @url, class: "border-2 border-gray-300 rounded-md p-2" %>
     <%= form.submit "Generate PDF", class: "bg-blue-500 text-white p-2 rounded-md cursor-pointer" %>
