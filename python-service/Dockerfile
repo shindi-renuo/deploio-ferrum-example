@@ -52,4 +52,4 @@ COPY . .
 EXPOSE 5000
 
 # Run app
-CMD ["bash", "gunicorn_starter.sh"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
