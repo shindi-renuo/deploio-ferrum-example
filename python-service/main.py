@@ -102,3 +102,5 @@ def get_pdf_status(task_id):
     if not status:
         return jsonify({"detail": "Task ID not found"}), 404
     return jsonify(status)
+
+

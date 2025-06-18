@@ -3,9 +3,7 @@ FROM python:3.12
 ENV PYPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 # Install dependencies
-RUN apt-get update
-
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
   libasound2 \
   libatk1.0-0 \
   libatk-bridge2.0-0 \
@@ -34,9 +32,9 @@ RUN apt-get install -y \
   ca-certificates \
   wget \
   curl \
-  gnupg
-
-RUN apt-get update && apt-get install -y chromium
+  gnupg \
+  chromium \
+  && rm -rf /var/lib/apt/lists/*
 
 # Create app dir
 WORKDIR /app
@@ -48,8 +46,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy app code
 COPY . .
 
-# Expose port
 EXPOSE 5000
-
-# Run app
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
