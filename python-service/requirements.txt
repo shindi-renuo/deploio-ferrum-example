@@ -1,4 +1,7 @@
 flask
-gunicorn
+quart
 pyppeteer
-asgiref
+hypercorn
+asyncio
+aiohttp
+asyncpg

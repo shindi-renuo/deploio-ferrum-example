@@ -1,26 +1,405 @@
-<div class="flex flex-col container items-center justify-center mx-auto mt-28 px-5">
-  <h1 class="text-3xl font-bold underline">PDF Generation Status</h1>
-  <% if @status['status'] == 'pending' || @status['status'] == 'processing' %>
-    <p class="text-center mt-4">PDF generation is in progress. Please wait...</p>
-    <p class="text-center">Task ID: <%= @task_id %></p>
-    <div class="mt-4 p-4 bg-blue-100 rounded-md">
-      <p>Refreshing in 5 seconds...</p>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">PDF Generator</h1>
+          <p class="text-sm text-gray-500 mt-1">Processing Status</p>
+        </div>
+        <%= link_to root_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200" do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Home
+        <% end %>
+      </div>
     </div>
-    <script>
-      setTimeout(function() {
-        window.location.reload();
-      }, 5000);
-    </script>
-  <% elsif @status['status'] == 'completed' %>
-    <p class="text-center mt-4 text-green-600 font-bold">PDF generation completed successfully!</p>
-    <p class="text-center"><a href="<%= @status['pdf_url'] %>" class="text-blue-500 hover:underline" download="<%= @status['pdf_file_name'] %>">Download PDF</a></p>
-    <p class="text-center mt-2"><a href="<%= root_path %>" class="text-gray-500 hover:underline">Go back to home</a></p>
-  <% elsif @status['status'] == 'failed' %>
-    <p class="text-center mt-4 text-red-600 font-bold">PDF generation failed!</p>
-    <p class="text-center">Error: <%= @status['error'] %></p>
-    <p class="text-center mt-2"><a href="<%= root_path %>" class="text-gray-500 hover:underline">Go back to home</a></p>
-  <% else %>
-    <p class="text-center mt-4 text-red-600 font-bold">Unknown status.</p>
-    <p class="text-center mt-2"><a href="<%= root_path %>" class="text-gray-500 hover:underline">Go back to home</a></p>
-  <% end %>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+      <div class="px-8 py-6 bg-gray-50 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900">PDF Generation Status</h2>
+            <p class="text-sm text-gray-600 mt-1">Task ID: <code class="bg-gray-100 px-2 py-1 rounded text-xs"><%= @task_id %></code></p>
+          </div>
+          <% if @status['status'] %>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+              <%= case @status['status']
+                  when 'completed' then 'bg-green-100 text-green-800'
+                  when 'failed' then 'bg-red-100 text-red-800'
+                  when 'processing' then 'bg-blue-100 text-blue-800'
+                  when 'queued' then 'bg-yellow-100 text-yellow-800'
+                  else 'bg-gray-100 text-gray-800'
+                  end %>">
+              <%= @status['status'].humanize %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="p-8">
+        <% case @status['status'] %>
+        <% when 'queued', 'pending' %>
+          <!-- Queued Status -->
+          <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">PDF Ready</h3>
+            <p class="text-gray-600 mb-6">Should be downloaded to your computer in 3 seconds.</p>
+          </div>
+
+        <% when 'processing' %>
+          <!-- Processing Status -->
+          <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">PDF Ready</h3>
+            <p class="text-gray-600 mb-6">Should be downloaded to your computer in 3 seconds.</p>
+          </div>
+
+        <% when 'completed' %>
+          <!-- Completed Status -->
+          <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">PDF Generated Successfully!</h3>
+            <p class="text-gray-600 mb-6">Your PDF has been created and should download automatically in 3-4 seconds.</p>
+
+            <% if @processing_time %>
+              <div class="text-sm text-gray-500 mb-6">
+                <p>Processing completed in <%= sprintf("%.1f", @processing_time) %> seconds</p>
+              </div>
+            <% end %>
+
+            <div class="space-y-4">
+              <%= link_to home_download_pdf_path(task_id: @task_id),
+                  class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-200" do %>
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Download PDF
+              <% end %>
+
+              <div class="text-center">
+                <%= link_to root_path, class: "text-indigo-600 hover:text-indigo-700 text-sm font-medium" do %>
+                  Generate Another PDF
+                <% end %>
+              </div>
+            </div>
+
+            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div class="flex items-center">
+                <svg class="h-5 w-5 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                </svg>
+                <p class="text-sm text-blue-800">
+                  <strong>Download should start automatically in 3-4 seconds.</strong> If it doesn't, click the download button above.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        <% when 'failed' %>
+          <!-- Failed Status -->
+          <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-6">
+              <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.134 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">PDF Generation Failed</h3>
+            <p class="text-gray-600 mb-6">Unfortunately, we encountered an error while processing your request.</p>
+
+            <% if @status['error'] %>
+              <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-left">
+                <h4 class="text-sm font-medium text-red-800 mb-2">Error Details:</h4>
+                <p class="text-sm text-red-700 font-mono"><%= @status['error'] %></p>
+              </div>
+            <% end %>
+
+            <div class="space-y-4">
+              <%= link_to root_path,
+                  class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200" do %>
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Try Again
+              <% end %>
+            </div>
+
+            <div class="mt-6 bg-red-50 border border-red-200 rounded-lg p-4 text-left">
+              <h4 class="text-sm font-medium text-red-800 mb-2">Common issues:</h4>
+              <ul class="text-sm text-red-700 space-y-1">
+                <li>• The website may be temporarily unavailable</li>
+                <li>• The URL might require authentication</li>
+                <li>• The webpage may contain complex content that's difficult to render</li>
+                <li>• The website may be blocking automated access</li>
+              </ul>
+            </div>
+          </div>
+
+        <% else %>
+          <!-- Unknown Status -->
+          <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-6">
+              <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Unknown Status</h3>
+            <p class="text-gray-600 mb-6">We're having trouble determining the status of your PDF generation.</p>
+
+            <%= link_to root_path,
+                class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200" do %>
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              Start Over
+            <% end %>
+          </div>
+        <% end %>
+
+        <!-- Status Details -->
+        <% if @status['created_at'] %>
+          <div class="mt-8 pt-6 border-t border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+              <div>
+                <span class="font-medium">Created:</span>
+                <%= Time.parse(@status['created_at']).strftime("%B %d, %Y at %I:%M %p") rescue @status['created_at'] %>
+              </div>
+              <% if @status['completed_at'] %>
+                <div>
+                  <span class="font-medium">Completed:</span>
+                  <%= Time.parse(@status['completed_at']).strftime("%B %d, %Y at %I:%M %p") rescue @status['completed_at'] %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
 </div>
+
+<% if @status && ['queued', 'pending', 'processing'].include?(@status['status']) %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const REFRESH_INTERVAL = 3000; // 3 seconds
+      const MAX_RETRIES = 40; // Maximum 2 minutes of polling
+      let retryCount = 0;
+      let refreshTimer;
+      let countdownTimer;
+      let nextRefreshIn = REFRESH_INTERVAL / 1000;
+      let useAjax = true; // Prefer AJAX over full page reload
+
+      // Check if status via AJAX
+      function checkStatusAjax() {
+        return fetch('<%= home_pdf_status_path(task_id: @task_id) %>', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            throw new Error(data.error);
+          }
+          return data;
+        });
+      }
+
+      // Update page content based on status
+      function updatePageContent(data) {
+        const status = data.status;
+
+        if (status === 'completed') {
+          // Redirect to trigger download
+          window.location.href = '<%= home_pdf_status_path(task_id: @task_id) %>';
+        } else if (status === 'failed') {
+          // Show error and redirect
+          alert('PDF generation failed: ' + (data.error || 'Unknown error'));
+          window.location.href = '<%= root_path %>';
+        } else if (status === 'processing' || status === 'queued' || status === 'pending') {
+          // Update status display if needed
+          updateStatusDisplay(status);
+          scheduleNextCheck();
+        } else {
+          // Unknown status, fall back to page reload
+          window.location.reload();
+        }
+      }
+
+      // Update the visual status display
+      function updateStatusDisplay(status) {
+        // Update status badge if needed
+        const statusBadge = document.querySelector('[class*="bg-yellow-100"], [class*="bg-blue-100"]');
+        if (statusBadge && status === 'processing' && statusBadge.textContent.trim() === 'Queued') {
+          statusBadge.className = statusBadge.className.replace('bg-yellow-100 text-yellow-800', 'bg-blue-100 text-blue-800');
+          statusBadge.textContent = 'Processing';
+
+          // Update the main content area
+          const titleEl = document.querySelector('h3');
+          if (titleEl && titleEl.textContent.includes('Queued')) {
+            titleEl.textContent = 'Generating Your PDF';
+          }
+
+          // Update progress bar
+          const progressBar = document.querySelector('.bg-yellow-500, .bg-blue-500');
+          if (progressBar) {
+            progressBar.className = progressBar.className.replace('bg-yellow-500', 'bg-blue-500');
+            progressBar.style.width = '75%';
+          }
+        }
+      }
+
+      // Create or update countdown display
+      function createCountdownDisplay() {
+        let countdownEl = document.getElementById('refresh-countdown');
+        if (!countdownEl) {
+          // Find a good place to insert the countdown
+          const statusContainer = document.querySelector('.bg-yellow-50, .bg-blue-50');
+          if (statusContainer) {
+            const countdownHTML = `
+              <div id="refresh-countdown" class="mt-3 text-xs text-gray-600 text-center">
+                <div class="flex items-center justify-center space-x-2">
+                  <svg class="w-3 h-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                  </svg>
+                  <span>Checking status in <span id="countdown-seconds">${nextRefreshIn}</span> seconds...</span>
+                </div>
+              </div>
+            `;
+            statusContainer.insertAdjacentHTML('beforeend', countdownHTML);
+            countdownEl = document.getElementById('refresh-countdown');
+          }
+        }
+        return countdownEl;
+      }
+
+      // Update countdown display
+      function updateCountdown() {
+        const countdownSecondsEl = document.getElementById('countdown-seconds');
+        if (countdownSecondsEl) {
+          countdownSecondsEl.textContent = nextRefreshIn;
+        }
+
+        if (nextRefreshIn > 0) {
+          nextRefreshIn--;
+          countdownTimer = setTimeout(updateCountdown, 1000);
+        }
+      }
+
+      // Check status (AJAX first, fallback to page reload)
+      function checkStatus() {
+        clearTimeout(refreshTimer);
+        clearTimeout(countdownTimer);
+
+        // Show checking state
+        const countdownEl = document.getElementById('refresh-countdown');
+        if (countdownEl) {
+          countdownEl.innerHTML = `
+            <div class="flex items-center justify-center space-x-2">
+              <svg class="w-3 h-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              <span>Checking status...</span>
+            </div>
+          `;
+        }
+
+        retryCount++;
+
+        if (retryCount >= MAX_RETRIES) {
+          // After maximum retries, show manual refresh option
+          if (countdownEl) {
+            countdownEl.innerHTML = `
+              <div class="text-center">
+                <p class="text-orange-600 mb-2">Status check timed out. The PDF might still be processing.</p>
+                <button onclick="window.location.reload()" class="text-blue-600 hover:text-blue-700 underline text-sm">
+                  Check Status Manually
+                </button>
+              </div>
+            `;
+          }
+          return;
+        }
+
+        if (useAjax) {
+          checkStatusAjax()
+            .then(updatePageContent)
+            .catch(error => {
+              console.warn('AJAX status check failed, falling back to page reload:', error);
+              useAjax = false; // Disable AJAX for subsequent checks
+              window.location.reload();
+            });
+        } else {
+          window.location.reload();
+        }
+      }
+
+      // Schedule next status check
+      function scheduleNextCheck() {
+        nextRefreshIn = REFRESH_INTERVAL / 1000;
+        createCountdownDisplay();
+        updateCountdown();
+        refreshTimer = setTimeout(checkStatus, REFRESH_INTERVAL);
+      }
+
+      // Start the auto-refresh cycle
+      function startAutoRefresh() {
+        scheduleNextCheck();
+      }
+
+      // Handle page visibility changes - pause when tab is not visible
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+          clearTimeout(refreshTimer);
+          clearTimeout(countdownTimer);
+        } else {
+          // Reset and restart when tab becomes visible
+          startAutoRefresh();
+        }
+      });
+
+      // Start the process
+      startAutoRefresh();
+
+      // Add manual refresh button
+      const statusContainer = document.querySelector('.bg-white.rounded-xl.shadow-lg');
+      if (statusContainer) {
+        const manualRefreshHTML = `
+          <div class="px-8 py-4 bg-gray-50 border-t border-gray-200">
+            <div class="flex items-center justify-between text-sm">
+              <div class="text-gray-600">
+                Auto-refreshing every ${REFRESH_INTERVAL / 1000} seconds
+              </div>
+              <button onclick="window.location.reload()"
+                      class="text-blue-600 hover:text-blue-700 font-medium flex items-center space-x-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>Refresh Now</span>
+              </button>
+            </div>
+          </div>
+        `;
+        statusContainer.insertAdjacentHTML('beforeend', manualRefreshHTML);
+      }
+    });
+  </script>
+<% end %>

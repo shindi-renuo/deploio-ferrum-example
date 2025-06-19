@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   root "home#index"
   post "home/generate_pdf" => "home#generate_pdf"
   get "home/pdf_status" => "home#pdf_status", as: :home_pdf_status
+  get "home/download_pdf" => "home#download_pdf", as: :home_download_pdf
 
   get "example" => "example#index"
 end

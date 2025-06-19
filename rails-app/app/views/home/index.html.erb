@@ -1,13 +1,235 @@
-<div class="flex flex-col container items-center justify-center mx-auto mt-28 px-5">
-  <% if flash[:alert] %>
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-      <span class="block sm:inline"><%= flash[:alert] %></span>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">PDF Generator</h1>
+          <p class="text-sm text-gray-500 mt-1">Convert any webpage to PDF instantly</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+          <span class="text-sm text-gray-600">Service Online</span>
+        </div>
+      </div>
     </div>
-  <% end %>
-  <h1 class="text-3xl font-bold underline">Pyppeteer PDF Generation Example</h1>
-  <p class="text-center">This Rails App is meant to demonstrate the capabilities of the <code>pyppeteer</code> gem, and whether it even works on deploio.</p>
-  <%= form_with url: home_generate_pdf_path, method: :post, data: { turbo: false } do |form| %>
-    <%= form.text_field :url, value: @url, class: "border-2 border-gray-300 rounded-md p-2" %>
-    <%= form.submit "Generate PDF", class: "bg-blue-500 text-white p-2 rounded-md cursor-pointer" %>
-  <% end %>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <% if flash[:alert] %>
+      <div class="mb-8 bg-red-50 border-l-4 border-red-400 p-4 rounded-md shadow-sm">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-red-700 font-medium"><%= flash[:alert] %></p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if flash[:notice] %>
+      <div class="mb-8 bg-green-50 border-l-4 border-green-400 p-4 rounded-md shadow-sm">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-green-700 font-medium"><%= flash[:notice] %></p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-6">
+        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </div>
+      <h2 class="text-4xl font-extrabold text-gray-900 sm:text-5xl mb-4">
+        Website to PDF
+      </h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+        Transform any webpage into a high-quality PDF document. Perfect for saving articles, reports, or entire websites for offline reading.
+      </p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-controller="pdf-form">
+      <div class="px-8 py-6 bg-gray-50 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Generate PDF</h3>
+        <p class="text-sm text-gray-600 mt-1">Enter a URL to convert to PDF</p>
+      </div>
+
+      <div class="p-8">
+        <%= form_with url: home_generate_pdf_path, method: :post, data: { turbo: false, pdf_form_target: "form", action: "submit->pdf-form#submit" }, local: true, class: "space-y-6" do |form| %>
+          <div>
+            <label for="url" class="block text-sm font-medium text-gray-700 mb-2">
+              Website URL
+            </label>
+            <div class="relative">
+              <%= form.url_field :url,
+                  value: @url,
+                  class: "block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 pl-12",
+                  placeholder: "https://example.com",
+                  required: true,
+                  id: "url" %>
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.102m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                </svg>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">
+              Supported: HTTP and HTTPS URLs. The webpage will be converted to a PDF document.
+            </p>
+          </div>
+
+          <div class="flex items-center justify-between pt-4">
+            <div class="flex items-center space-x-2 text-sm text-gray-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+              <span>Secure processing</span>
+            </div>
+
+            <%= form.submit "Generate PDF",
+                class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed",
+                id: "submit-btn",
+                data: { loading_text: "Processing..." } %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Lightning Fast</h3>
+        <p class="text-gray-600">High-performance PDF generation with optimized processing</p>
+      </div>
+
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mb-4">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">High Quality</h3>
+        <p class="text-gray-600">Professional PDF output with accurate rendering</p>
+      </div>
+
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg mb-4">
+          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Secure</h3>
+        <p class="text-gray-600">Your data is processed securely and not stored</p>
+      </div>
+    </div>
+
+    <div class="mt-12 bg-gray-50 rounded-lg p-6">
+      <h4 class="text-sm font-medium text-gray-900 mb-3">Try these example URLs:</h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <% example_urls = [
+          "https://www.google.com",
+          "https://github.com",
+          "https://stackoverflow.com",
+          "https://news.ycombinator.com"
+        ] %>
+        <% example_urls.each do |url| %>
+          <button type="button"
+                  class="text-left px-3 py-2 text-sm text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-md transition duration-200 example-url"
+                  data-url="<%= url %>">
+            <%= url %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </main>
 </div>
+<%#
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('pdf-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const urlInput = document.getElementById('url');
+  const exampleUrls = document.querySelectorAll('.example-url');
+
+  const originalButtonText = submitBtn.textContent;
+  const originalButtonHTML = submitBtn.innerHTML;
+
+  exampleUrls.forEach(button => {
+    button.addEventListener('click', function() {
+      urlInput.value = this.dataset.url;
+      urlInput.focus();
+    });
+  });
+
+  form.addEventListener('submit', function(e) {
+    const url = urlInput.value.trim();
+    if (!url || !isValidUrl(url)) {
+      e.preventDefault();
+      urlInput.focus();
+      return false;
+    }
+
+    showDownloadMessage();
+  });
+
+  function showDownloadMessage() {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'mt-4 bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md shadow-sm';
+    messageDiv.innerHTML = `
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-blue-700 font-medium">PDF generation started! Your download should begin automatically in 3-4 seconds.</p>
+        </div>
+      </div>
+    `;
+
+    form.parentNode.insertBefore(messageDiv, form.nextSibling);
+
+    setTimeout(() => {
+      if (messageDiv.parentNode) {
+        messageDiv.parentNode.removeChild(messageDiv);
+      }
+    }, 8000);
+  }
+
+  urlInput.addEventListener('input', function() {
+    const url = this.value.trim();
+    if (url && !isValidUrl(url)) {
+      this.setCustomValidity('Please enter a valid HTTP or HTTPS URL');
+    } else {
+      this.setCustomValidity('');
+    }
+  });
+
+  function isValidUrl(string) {
+    try {
+      const url = new URL(string);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (_) {
+      return false;
+    }
+  }
+
+
+});
+</script> %>
