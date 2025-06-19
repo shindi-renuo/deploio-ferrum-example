@@ -46,11 +46,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-
 WORKDIR /app
-
-RUN mkdir -p /app/pdf && chown -R appuser:appuser /app
 
 COPY requirements.txt .
 
@@ -58,10 +54,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-
-RUN chown -R appuser:appuser /app
-
-USER appuser
 
 EXPOSE 5000
 
