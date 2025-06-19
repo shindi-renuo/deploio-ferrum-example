@@ -185,7 +185,8 @@ class ChromePool:
             args=[
                 "--no-sandbox", # otherwise won't work in docker
                 "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage", # we don't need shared memory                "--disable-gpu",
+                "--disable-dev-shm-usage", # we don't need shared memory
+                "--disable-gpu", # why gpu, deploio does not have one anyways
                 "--disable-extensions", # unnecessary
                 "--disable-plugins", # what even is this, we don't need it
                 "--no-first-run", # skip wizard
